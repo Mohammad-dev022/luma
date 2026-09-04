@@ -41,18 +41,23 @@ jobs:
           docker stop luma-test
 
   deploy:
-    name: Deploy to Heroku
+    name: Deploy to Railway
     runs-on: ubuntu-latest
     needs: docker-build
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
-      - uses: akhileshns/heroku-deploy@v3.13.15
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          usedocker: true
-      - run: |
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        run: railway up --service luma
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Verify deployment is live
+        run: |
           sleep 15
-          curl -f https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com || exit 1
+          curl -f https://luma-production-cb8f.up.railway.app || exit 1
+          echo "Deployment verified — app is live"
