@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Deals — Luma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css"/>
+  <style>
+    .deals-hero{background:var(--ink);color:var(--wh);padding:52px 0 40px;text-align:center;position:relative;overflow:hidden}
+    .deals-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(239,68,68,.15) 0%,transparent 70%)}
+    .dh-tag{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .dh-tag::before,.dh-tag::after{content:'';display:block;width:28px;height:1.5px;background:var(--red)}
+    .dh-h1{font-family:var(--disp);font-size:clamp(36px,5vw,60px);font-weight:700;line-height:1.08;margin-bottom:14px}
+    .dh-h1 em{font-style:italic;color:#FCA5A5}
+    .dh-sub{font-size:15px;color:rgba(255,255,255,.5);margin-bottom:32px}
+    .deal-timer-big{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+    .dtb-seg{text-align:center}
+    .dtb-num{display:block;font-size:clamp(36px,5vw,56px);font-weight:700;font-variant-numeric:tabular-nums;line-height:1;color:var(--wh)}
+    .dtb-lbl{display:block;font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+    .dtb-sep{font-size:40px;font-weight:700;color:rgba(255,255,255,.2);align-self:flex-start;margin-top:4px}
+    .deals-grid-full{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;padding:44px 0 80px}
+    .deal-full-card{background:var(--wh);border-radius:var(--r2);overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all .18s;display:flex;flex-direction:column}
+    .deal-full-card:hover{box-shadow:var(--sh2);transform:translateY(-3px)}
+    .dfc-img{height:180px;display:flex;align-items:center;justify-content:center;font-size:72px;transition:transform .25s}
+    .deal-full-card:hover .dfc-img{transform:scale(1.06)}
+    .dfc-body{padding:16px;flex:1;display:flex;flex-direction:column}
+    .dfc-cat{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+    .dfc-name{font-size:15px;font-weight:600;margin-bottom:6px;line-height:1.3}
+    .dfc-desc{font-size:13px;color:var(--muted);line-height:1.5;flex:1;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .dfc-prices{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .dfc-now{font-size:22px;font-weight:700}
+    .dfc-was{font-size:14px;text-decoration:line-through;color:var(--muted)}
+    .dfc-off{font-size:12px;font-weight:700;background:#FEF2F2;color:var(--red);padding:3px 8px;border-radius:4px}
+    .dfc-bar-bg{height:5px;background:var(--border);border-radius:4px;margin-bottom:6px}
+    .dfc-bar{height:100%;background:var(--sage);border-radius:4px}
+    .dfc-claimed{font-size:11.5px;color:var(--muted);margin-bottom:12px}
+    .dfc-add{width:100%;padding:11px;background:var(--ink);border:none;border-radius:var(--r);font-size:14px;font-weight:600;color:var(--wh);cursor:pointer;transition:all .15s}
+    .dfc-add:hover{background:var(--ink2)}.dfc-add.adding{background:var(--sage2)}
+    .savings-badge{position:absolute;top:12px;right:12px;background:var(--red);color:var(--wh);font-size:13px;font-weight:700;padding:4px 10px;border-radius:20px}
+  </style>
+</head>
+<body>
+<div id="navMount"></div>
+
+<section class="deals-hero">
+  <div class="page-wrap" style="position:relative;z-index:1">
+    <p class="dh-tag">Flash Sale</p>
+    <h1 class="dh-h1">Today's best <em>deals</em></h1>
+    <p class="dh-sub">These prices won't last. Stock is limited.</p>
+    <div class="deal-timer-big">
+      <div class="dtb-seg"><span class="dtb-num" id="dth">00</span><span class="dtb-lbl">Hours</span></div>
+      <span class="dtb-sep">:</span>
+      <div class="dtb-seg"><span class="dtb-num" id="dtm">00</span><span class="dtb-lbl">Minutes</span></div>
+      <span class="dtb-sep">:</span>
+      <div class="dtb-seg"><span class="dtb-num" id="dts">00</span><span class="dtb-lbl">Seconds</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="page-wrap">
+  <div class="deals-grid-full" id="dealsGrid"></div>
+</div>
+
+<div id="footerMount"></div>
+<div id="panelsMount"></div>
+
+<script src="/js/base.js"></script>
+<script>
+window.onSearchInput=v=>{clearTimeout(window._st);window._st=setTimeout(()=>{if(v)window.location.href=`/search?q=${encodeURIComponent(v)}`},500);};
+(async()=>{
+  document.getElementById('navMount').innerHTML=NAV_HTML;
+  document.getElementById('panelsMount').innerHTML=CART_PANEL_HTML+WISHLIST_PANEL_HTML+ACCOUNT_PANEL_HTML+CHECKOUT_HTML+CONFIRMED_HTML+COMPARE_HTML;
+  document.getElementById('footerMount').innerHTML=FOOTER_HTML;
+  initSharedListeners();
+  await Promise.all([loadUser(),refreshCart()]);
+  renderWishlist([]);
+  // Countdown
+  const end=new Date();end.setHours(23,59,59,0);
+  const tick=()=>{const d=end-new Date(),h=Math.floor(d/3600000),m=Math.floor(d%3600000/60000),s=Math.floor(d%60000/1000);const p=n=>String(n).padStart(2,'0');$('dth').textContent=p(h);$('dtm').textContent=p(m);$('dts').textContent=p(s);};
+  tick();setInterval(tick,1000);
+  // Load ALL sale products
+  const dd=await api('GET','/api/products?');
+  const products=(dd.products||[]).filter(p=>p.originalPrice&&p.originalPrice>p.price);
+  const grid=$('dealsGrid');
+  grid.innerHTML=products.map((p,i)=>{
+    const d=pct(p.originalPrice,p.price),c=20+Math.floor(Math.random()*60);
+    return `<div class="deal-full-card reveal" data-id="${p.id}" style="position:relative;transition-delay:${i*40}ms">
+      <span class="savings-badge">-${d}%</span>
+      <div class="dfc-img" style="background:${p.bg}">${p.emoji}</div>
+      <div class="dfc-body">
+        <p class="dfc-cat">${p.category}</p>
+        <p class="dfc-name">${p.name}</p>
+        <p class="dfc-desc">${p.description}</p>
+        <div class="dfc-prices"><span class="dfc-now">${fmt(p.price)}</span><span class="dfc-was">${fmt(p.originalPrice)}</span><span class="dfc-off">Save ${fmt(p.originalPrice-p.price)}</span></div>
+        <div class="dfc-bar-bg"><div class="dfc-bar" style="width:0%" data-w="${c}"></div></div>
+        <p class="dfc-claimed">${c}% of stock claimed</p>
+        <button class="dfc-add" data-id="${p.id}" ${p.stock===0?'disabled':''}>Add to cart</button>
+      </div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(()=>grid.querySelectorAll('.dfc-bar').forEach(el=>setTimeout(()=>el.style.width=el.dataset.w+'%',400)));
+  grid.querySelectorAll('.deal-full-card').forEach(c=>{
+    c.addEventListener('click',e=>{if(e.target.closest('.dfc-add'))return;window.location.href=`/product?id=${c.dataset.id}`;});
+  });
+  grid.querySelectorAll('.dfc-add').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();addToCart(parseInt(btn.dataset.id),1,btn);}));
+  initReveal();
+})();
+</script>
+</body>
+</html>

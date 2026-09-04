@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Luma — Curated Products</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css"/>
+  <style>
+    /* Hero */
+    .hero{background:var(--ink);color:var(--wh);position:relative;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto}
+    .hba{position:absolute;border-radius:50%;filter:blur(80px);opacity:.14;animation:floatOrb 12s ease-in-out infinite;pointer-events:none}
+    .hba1{width:400px;height:400px;background:#22C55E;top:-100px;left:-100px;animation-delay:0s}
+    .hba2{width:300px;height:300px;background:#3B82F6;top:50%;right:-80px;animation-delay:-4s}
+    .hba3{width:350px;height:350px;background:#A855F7;bottom:-120px;left:40%;animation-delay:-8s}
+    @keyframes floatOrb{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,15px) scale(.95)}}
+    .hero-left{padding:64px 40px 48px 60px;display:flex;flex-direction:column;justify-content:center;max-width:560px;position:relative;z-index:2;animation:fadeUp .7s ease both}
+    .hero-label{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--sage);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+    .hero-dot{width:6px;height:6px;background:var(--sage);border-radius:50%;animation:dotpulse 2s ease-in-out infinite}
+    @keyframes dotpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+    .hero-h1{font-family:var(--disp);font-size:clamp(40px,4.5vw,68px);font-weight:700;line-height:1.06;margin-bottom:18px;color:var(--wh);animation:fadeUp .7s .1s ease both}
+    .hero-h1 em{font-style:italic;color:#86EFAC}
+    .hero-p{font-size:15px;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:26px;animation:fadeUp .7s .15s ease both}
+    .hero-acts{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px;animation:fadeUp .7s .2s ease both}
+    .hpil{font-size:12px;color:rgba(255,255,255,.4);background:rgba(255,255,255,.06);padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.08);animation:fadeUp .7s .25s ease both}
+    .hero-right{display:flex;align-items:center;justify-content:center;padding:40px 60px 40px 0;position:relative;z-index:2}
+    .hero-mosaic{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:clamp(220px,28%,300px);animation:fadeUp .7s .15s ease both}
+    .hm-cell{border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:44px;aspect-ratio:1;transition:transform .25s,box-shadow .25s;cursor:pointer;border:1px solid rgba(255,255,255,.1)}
+    .hm-cell:hover{transform:scale(1.06) rotate(-1deg);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+    .hm-big{grid-column:span 2;aspect-ratio:2/1;font-size:58px}
+    .hero-strip{grid-column:span 2;background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;padding:14px 20px;gap:0;flex-wrap:wrap;position:relative;z-index:2}
+    .hs{padding:0 26px;text-align:center}.hs-n{display:block;font-size:18px;font-weight:700;color:var(--wh);line-height:1;font-variant-numeric:tabular-nums}.hs-l{display:block;font-size:10.5px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;margin-top:3px}
+    .hs-d{width:1px;height:24px;background:rgba(255,255,255,.1)}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    /* Category showcase */
+    .cat-showcase{padding:52px 0;background:var(--sand)}
+    .cs-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;height:300px}
+    .csg-card{border-radius:var(--r2);display:flex;flex-direction:column;justify-content:flex-end;padding:18px 20px;cursor:pointer;overflow:hidden;position:relative;transition:transform .2s,box-shadow .2s}
+    .csg-card:hover{transform:translateY(-3px);box-shadow:var(--sh2)}
+    .csg-card.csg-wide{grid-row:span 2}
+    .csg-emoji{font-size:48px;position:absolute;top:14px;right:18px;opacity:.85;transition:transform .3s}
+    .csg-card:hover .csg-emoji{transform:scale(1.12) rotate(-5deg)}
+    .csg-label{font-size:16px;font-weight:700;color:rgba(255,255,255,.95);margin-bottom:3px}
+    .csg-count{font-size:12px;color:rgba(255,255,255,.5)}
+    .csg-wide .csg-emoji{font-size:72px;top:20px}.csg-wide .csg-label{font-size:22px}
+    /* Deals strip */
+    .deals-sec{padding:48px 0}
+    .deals-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:16px;flex-wrap:wrap}
+    .deals-sub{font-size:13px;color:var(--muted)}
+    .dtw{display:flex;flex-direction:column;align-items:flex-end}
+    .dtw-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+    .dtw-digits{display:flex;align-items:center;gap:6px}
+    .dtd{background:var(--ink);color:var(--wh);border-radius:var(--r);padding:8px 10px;text-align:center;min-width:46px}
+    .dtd-n{display:block;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+    .dtd-l{display:block;font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+    .dtd-sep{font-size:20px;font-weight:700;color:var(--ink2)}
+    .deals-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;scrollbar-color:var(--muted2) transparent}
+    .dcard{flex:0 0 178px;background:var(--wh);border-radius:var(--r2);overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all .18s}
+    .dcard:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
+    .dc-img{height:116px;display:flex;align-items:center;justify-content:center;font-size:50px;transition:transform .2s}
+    .dcard:hover .dc-img{transform:scale(1.08)}
+    .dc-body{padding:10px 12px}
+    .dc-name{font-size:12.5px;font-weight:600;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .dc-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+    .dc-now{font-size:15px;font-weight:700}.dc-was{font-size:12px;text-decoration:line-through;color:var(--muted)}.dc-off{font-size:10px;font-weight:700;background:#FEF2F2;color:var(--red);padding:2px 6px;border-radius:3px}
+    .dc-bar{height:4px;background:var(--border);border-radius:4px;margin-bottom:5px;overflow:hidden}
+    .dc-fill{height:100%;background:var(--sage);border-radius:4px;transition:width .6s ease}
+    .dc-claimed{font-size:11px;color:var(--muted)}
+    /* Bestsellers */
+    .bs-section{padding:48px 0;background:var(--sand)}
+    /* Featured cat */
+    .feat-section{padding:48px 0}
+    .feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .feat-card{border-radius:var(--r2);padding:32px;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;min-height:200px;position:relative;overflow:hidden;transition:transform .2s}
+    .feat-card:hover{transform:translateY(-3px)}
+    .feat-card-emoji{font-size:64px;position:absolute;top:20px;right:24px;opacity:.9;transition:transform .3s}
+    .feat-card:hover .feat-card-emoji{transform:scale(1.1) rotate(-3deg)}
+    .feat-card-label{font-size:20px;font-weight:700;margin-bottom:6px}
+    .feat-card-sub{font-size:13px;opacity:.7;margin-bottom:16px}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;grid-template-rows:auto auto}.hero-right{display:none}.hero-left{padding:48px 24px 36px}.hero-strip{grid-column:1}.cs-grid{grid-template-columns:1fr 1fr;height:auto}.csg-wide{grid-column:span 2}.feat-grid{grid-template-columns:1fr}}
+    @media(max-width:600px){.hs-d{display:none}.hs{flex:1 1 80px}}
+  </style>
+</head>
+<body>
+<div id="navMount"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hba hba1"></div><div class="hba hba2"></div><div class="hba hba3"></div>
+  <div class="hero-left">
+    <p class="hero-label"><span class="hero-dot"></span>New arrivals · 2026</p>
+    <h1 class="hero-h1">Find things you'll<br><em>actually</em> reach for.</h1>
+    <p class="hero-p">20 curated products. Sorted by quality, not clicks.</p>
+    <div class="hero-acts">
+      <a href="/shop" class="btn-sage">Browse collection</a>
+      <a href="/deals" class="btn-ghost">What's on sale →</a>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <span class="hpil">🚚 Free over £45</span>
+      <span class="hpil">↩️ 30-day returns</span>
+      <span class="hpil">🔒 Secure checkout</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-mosaic">
+      <div class="hm-cell hm-big" style="background:#D4E4F7" data-id="1">💻</div>
+      <div class="hm-cell" style="background:#E8D4F7" data-id="2">🎧</div>
+      <div class="hm-cell" style="background:#F7EDD4" data-id="3">👟</div>
+      <div class="hm-cell" style="background:#D4F0E8" data-id="4">☕</div>
+    </div>
+  </div>
+  <div class="hero-strip">
+    <div class="hs"><span class="hs-n" id="hn-prod">20</span><span class="hs-l">Products</span></div>
+    <div class="hs-d"></div>
+    <div class="hs"><span class="hs-n">8</span><span class="hs-l">Categories</span></div>
+    <div class="hs-d"></div>
+    <div class="hs"><span class="hs-n" id="hn-timer">--:--:--</span><span class="hs-l">Sale ends in</span></div>
+    <div class="hs-d"></div>
+    <div class="hs"><span class="hs-n">43</span><span class="hs-l">Tests passing</span></div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="cat-showcase reveal">
+  <div class="page-wrap">
+    <h2 class="section-h">Browse by category</h2>
+    <div class="cs-grid">
+      <div class="csg-card csg-wide" data-cat="Electronics" style="background:linear-gradient(135deg,#1e3a5f,#2d5f9e)">
+        <div class="csg-emoji">📱</div><div class="csg-label">Electronics</div><div class="csg-count">8 products</div>
+      </div>
+      <div class="csg-card" data-cat="Clothing" style="background:linear-gradient(135deg,#2d4a3e,#4a7c5f)">
+        <div class="csg-emoji">👕</div><div class="csg-label">Clothing</div><div class="csg-count">2 products</div>
+      </div>
+      <div class="csg-card" data-cat="Kitchen" style="background:linear-gradient(135deg,#4a2c2c,#8b4545)">
+        <div class="csg-emoji">🍳</div><div class="csg-label">Kitchen</div><div class="csg-count">4 products</div>
+      </div>
+      <div class="csg-card" data-cat="Footwear" style="background:linear-gradient(135deg,#5a3e2b,#8b6347)">
+        <div class="csg-emoji">👟</div><div class="csg-label">Footwear</div><div class="csg-count">2 products</div>
+      </div>
+      <div class="csg-card" data-cat="Appliances" style="background:linear-gradient(135deg,#1a3a3a,#2d6b6b)">
+        <div class="csg-emoji">🌀</div><div class="csg-label">Appliances</div><div class="csg-count">2 products</div>
+      </div>
+      <div class="csg-card" data-cat="Outdoor" style="background:linear-gradient(135deg,#2d4a1e,#4a7c32)">
+        <div class="csg-emoji">🌿</div><div class="csg-label">Outdoor</div><div class="csg-count">1 product</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEALS STRIP -->
+<section class="deals-sec reveal" id="dealsStrip">
+  <div class="page-wrap">
+    <div class="deals-hdr">
+      <div><h2 class="section-h" style="margin-bottom:4px">On sale now</h2><p class="deals-sub">Discounts reset at midnight</p></div>
+      <div class="dtw">
+        <span class="dtw-label">Time remaining</span>
+        <div class="dtw-digits">
+          <div class="dtd"><span class="dtd-n" id="dth">00</span><span class="dtd-l">hrs</span></div>
+          <span class="dtd-sep">:</span>
+          <div class="dtd"><span class="dtd-n" id="dtm">00</span><span class="dtd-l">min</span></div>
+          <span class="dtd-sep">:</span>
+          <div class="dtd"><span class="dtd-n" id="dts">00</span><span class="dtd-l">sec</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="deals-scroll" id="dealsGrid"></div>
+    <div style="text-align:center;margin-top:20px"><a href="/deals" class="btn-ghost">See all deals →</a></div>
+  </div>
+</section>
+
+<!-- BESTSELLERS -->
+<section class="bs-section reveal">
+  <div class="page-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <h2 class="section-h" style="margin-bottom:0">Bestsellers</h2>
+      <a href="/shop?tag=bestseller" class="btn-ghost" style="font-size:13px">View all →</a>
+    </div>
+    <div class="pgrid" id="bestsellersGrid"></div>
+  </div>
+</section>
+
+<!-- FEATURED CATEGORIES -->
+<section class="feat-section reveal">
+  <div class="page-wrap">
+    <h2 class="section-h">Made for your life</h2>
+    <div class="feat-grid">
+      <div class="feat-card" data-cat="Electronics" style="background:linear-gradient(135deg,#D4E4F7,#B8D0F0)">
+        <div class="feat-card-emoji">💻</div>
+        <div><p class="feat-card-label" style="color:var(--ink)">Work from anywhere</p><p class="feat-card-sub" style="color:var(--ink)">MacBooks, iPads, peripherals</p><a href="/shop?cat=Electronics" class="btn-primary" style="display:inline-block;font-size:13px;padding:9px 18px">Shop Electronics</a></div>
+      </div>
+      <div class="feat-card" data-cat="Kitchen" style="background:linear-gradient(135deg,#F7EDD4,#F0D9A8)">
+        <div class="feat-card-emoji">☕</div>
+        <div><p class="feat-card-label" style="color:var(--ink)">Upgrade your kitchen</p><p class="feat-card-sub" style="color:var(--ink)">Coffee, mixers, air fryers</p><a href="/shop?cat=Kitchen" class="btn-primary" style="display:inline-block;font-size:13px;padding:9px 18px">Shop Kitchen</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footerMount"></div>
+<div id="panelsMount"></div>
+
+<script src="/js/base.js"></script>
+<script>
+(async () => {
+  // Inject nav, panels, footer
+  document.getElementById('navMount').innerHTML = NAV_HTML;
+  document.getElementById('panelsMount').innerHTML = CART_PANEL_HTML + WISHLIST_PANEL_HTML + ACCOUNT_PANEL_HTML + CHECKOUT_HTML + CONFIRMED_HTML + COMPARE_HTML;
+  document.getElementById('footerMount').innerHTML = FOOTER_HTML;
+  initSharedListeners();
+  await Promise.all([loadUser(), refreshCart()]);
+  renderWishlist([]);
+
+  // Countdown
+  const end = new Date(); end.setHours(23,59,59,0);
+  setInterval(() => {
+    const d=end-new Date(),h=Math.floor(d/3600000),m=Math.floor(d%3600000/60000),s=Math.floor(d%60000/1000);
+    const p=n=>String(n).padStart(2,'0');
+    const t=$('hn-timer');if(t)t.textContent=`${p(h)}:${p(m)}:${p(s)}`;
+    const dth=$('dth'),dtm=$('dtm'),dts=$('dts');
+    if(dth)dth.textContent=p(h);if(dtm)dtm.textContent=p(m);if(dts)dts.textContent=p(s);
+  }, 1000);
+
+  // Load deals
+  const dd = await api('GET','/api/products/deals');
+  document.getElementById('dealsGrid').innerHTML=(dd.products||[]).map(p=>{
+    const d=p.originalPrice?pct(p.originalPrice,p.price):0,c=25+Math.floor(Math.random()*50);
+    return `<div class="dcard" data-id="${p.id}">
+      <div class="dc-img" style="background:${p.bg}">${p.emoji}</div>
+      <div class="dc-body"><p class="dc-name">${p.name}</p>
+      <div class="dc-row"><span class="dc-now">${fmt(p.price)}</span><span class="dc-was">${fmt(p.originalPrice)}</span><span class="dc-off">-${d}%</span></div>
+      <div class="dc-bar"><div class="dc-fill" style="width:0%" data-w="${c}"></div></div>
+      <p class="dc-claimed">${c}% claimed</p></div></div>`;
+  }).join('');
+  requestAnimationFrame(()=>{ document.querySelectorAll('.dc-fill').forEach(el=>setTimeout(()=>el.style.width=el.dataset.w+'%',300)); });
+  document.querySelectorAll('.dcard').forEach(c=>c.addEventListener('click',()=>window.location.href=`/product?id=${c.dataset.id}`));
+
+  // Load bestsellers (top 4)
+  const pd = await api('GET','/api/products?sort=reviews');
+  const bests=(pd.products||[]).filter(p=>p.tags?.includes('bestseller')).slice(0,4);
+  const bg=document.getElementById('bestsellersGrid');
+  bg.innerHTML=bests.map((p,i)=>`
+    <article class="pc" data-id="${p.id}" style="transition-delay:${i*60}ms">
+      <div class="pc-img" style="background:${p.bg}"><div class="pc-img-inner">${p.emoji}</div>${p.badge?`<span class="pc-badge b-${p.badge.toLowerCase()}">${p.badge}</span>`:''}</div>
+      <div class="pc-body">
+        <p class="pc-cat">${p.category}</p><h3 class="pc-name">${p.name}</h3>
+        <div class="pc-stars"><span class="sv">${star(p.rating)}</span><span class="sn">${p.rating}</span><span class="sc">(${rnum(p.reviews)})</span></div>
+        <div class="pc-prices"><span class="pc-price">${fmt(p.price)}</span>${p.originalPrice?`<span class="pc-orig">${fmt(p.originalPrice)}</span><span class="pc-pct">-${pct(p.originalPrice,p.price)}%</span>`:''}</div>
+        <div class="pc-add-wrap"><button class="pc-add" data-id="${p.id}">Add to cart</button></div>
+      </div>
+    </article>`).join('');
+  requestAnimationFrame(()=>{ bg.querySelectorAll('.pc').forEach((c,i)=>setTimeout(()=>c.classList.add('visible'),i*60)); });
+  bg.querySelectorAll('.pc').forEach(c=>c.addEventListener('click',e=>{ if(e.target.closest('.pc-add'))return; window.location.href=`/product?id=${c.dataset.id}`; }));
+  bg.querySelectorAll('.pc-add').forEach(btn=>btn.addEventListener('click',e=>{ e.stopPropagation(); addToCart(parseInt(btn.dataset.id),1,btn); }));
+
+  // Category showcase → go to shop
+  document.querySelectorAll('.csg-card').forEach(c=>c.addEventListener('click',()=>window.location.href=`/shop?cat=${c.dataset.cat}`));
+  document.querySelectorAll('.hm-cell').forEach(c=>c.addEventListener('click',()=>window.location.href=`/product?id=${c.dataset.id}`));
+  document.querySelectorAll('.feat-card').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('a'))window.location.href=`/shop?cat=${c.dataset.cat}`; }));
+
+  initReveal();
+})();
+</script>
+</body>
+</html>

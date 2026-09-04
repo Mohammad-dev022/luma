@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Account — Luma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css"/>
+  <style>
+    .acc-layout{display:grid;grid-template-columns:240px 1fr;gap:36px;padding:36px 0 80px;align-items:start}
+    @media(max-width:700px){.acc-layout{grid-template-columns:1fr}}
+    .acc-sidebar{position:sticky;top:calc(var(--nav-h)+16px)}
+    .acc-menu-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r);font-size:14px;font-weight:500;color:var(--ink2);cursor:pointer;transition:background .15s;background:none;border:none;width:100%;text-align:left}
+    .acc-menu-item:hover{background:var(--sand)}
+    .acc-menu-item.active{background:var(--sand2);color:var(--ink);font-weight:600}
+    .acc-content{min-height:400px}
+    .acc-section{display:none}.acc-section.active{display:block}
+    .user-hero{background:linear-gradient(135deg,var(--ink),#3F3F46);border-radius:var(--r2);padding:24px;color:var(--wh);display:flex;align-items:center;gap:20px;margin-bottom:24px}
+    .user-avatar-lg{width:60px;height:60px;background:var(--sage);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-style:italic;font-size:24px;font-weight:700;color:var(--ink)}
+    .auth-box{max-width:400px;background:var(--wh);border:1px solid var(--border);border-radius:var(--r2);padding:32px}
+    .auth-tabs{display:flex;border-bottom:1.5px solid var(--border);margin-bottom:22px}
+    .auth-tab{flex:1;padding:10px;background:none;border:none;font-size:14px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1.5px;cursor:pointer;transition:all .15s}
+    .auth-tab.active{color:var(--ink);border-bottom-color:var(--ink)}
+    .aff{margin-bottom:12px}
+    .aff label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px}
+    .aff input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;background:var(--sand);outline:none;transition:border-color .15s}
+    .aff input:focus{border-color:var(--ink);background:var(--wh)}
+    .order-row{background:var(--wh);border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+    .order-row:hover{border-color:var(--muted2);box-shadow:var(--sh)}
+    .or-id{font-size:13.5px;font-weight:700;margin-bottom:3px}
+    .or-items{font-size:12.5px;color:var(--muted)}
+    .or-date{font-size:12px;color:var(--muted)}
+    .or-total{font-size:17px;font-weight:700}
+    .or-status{font-size:12px;font-weight:600;background:#DCFCE7;color:var(--sage2);padding:3px 10px;border-radius:20px}
+  </style>
+</head>
+<body>
+<div id="navMount"></div>
+<div class="page-wrap">
+  <div style="padding-top:24px"><div class="breadcrumb"><a href="/">Home</a><span>›</span><span style="color:var(--ink);font-weight:500">Account</span></div></div>
+  <div class="acc-layout">
+    <aside class="acc-sidebar" id="accSidebar"></aside>
+    <div class="acc-content" id="accContent"></div>
+  </div>
+</div>
+<div id="footerMount"></div>
+<div id="panelsMount"></div>
+<script src="/js/base.js"></script>
+<script>
+window.onSearchInput=v=>{clearTimeout(window._st);window._st=setTimeout(()=>{if(v)window.location.href=`/search?q=${encodeURIComponent(v)}`},500);};
+
+function renderLoggedIn() {
+  const initials=S.user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  $('accSidebar').innerHTML=`
+    <button class="acc-menu-item active" data-sec="overview">Overview</button>
+    <button class="acc-menu-item" data-sec="orders">Orders</button>
+    <button class="acc-menu-item" data-sec="settings">Settings</button>
+    <hr style="border:none;border-top:1px solid var(--border);margin:12px 0"/>
+    <button class="acc-menu-item" id="logoutBtn" style="color:var(--red)">Sign out</button>`;
+  $('accSidebar').querySelectorAll('[data-sec]').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('[data-sec]').forEach(b=>b.classList.toggle('active',b===btn)); showSection(btn.dataset.sec); }));
+  $('logoutBtn').addEventListener('click',async()=>{ await api('POST','/api/users/logout'); S.token=null;S.user=null;localStorage.removeItem('luma_token'); window.location.reload(); });
+  showSection('overview');
+}
+
+async function showSection(sec) {
+  const el=$('accContent');
+  if(sec==='overview'){
+    const initials=S.user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    el.innerHTML=`
+      <div class="user-hero">
+        <div class="user-avatar-lg">${initials}</div>
+        <div><p style="font-size:20px;font-weight:700;margin-bottom:3px">${S.user.name}</p><p style="font-size:14px;opacity:.6">${S.user.email}</p><p style="font-size:12px;opacity:.4;margin-top:4px">Member since ${S.user.joined}</p></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+        <div style="background:var(--sand);border-radius:var(--r2);padding:16px;text-align:center"><p style="font-size:28px;font-weight:700" id="ov-orders">—</p><p style="font-size:12px;color:var(--muted);margin-top:4px">Orders</p></div>
+        <div style="background:var(--sand);border-radius:var(--r2);padding:16px;text-align:center"><p style="font-size:28px;font-weight:700" id="ov-saved">${S.wishlist.size}</p><p style="font-size:12px;color:var(--muted);margin-top:4px">Saved items</p></div>
+        <div style="background:var(--sand);border-radius:var(--r2);padding:16px;text-align:center"><p style="font-size:28px;font-weight:700" id="ov-spent">—</p><p style="font-size:12px;color:var(--muted);margin-top:4px">Total spent</p></div>
+      </div>`;
+    const od=await api('GET','/api/users/orders');
+    const ords=od.orders||[];
+    $('ov-orders').textContent=ords.length;
+    const spent=ords.reduce((s,o)=>s+(o.total||0),0);
+    $('ov-spent').textContent=spent?fmt(spent):'£0';
+  } else if(sec==='orders'){
+    const od=await api('GET','/api/users/orders');
+    const ords=od.orders||[];
+    el.innerHTML=`<h2 style="font-family:var(--disp);font-style:italic;font-size:20px;font-weight:700;margin-bottom:20px">Order history</h2>`
+      +(ords.length?ords.map(o=>`<div class="order-row"><div><p class="or-id">Order #${o.orderId}</p><p class="or-items">${o.items?.map(i=>`${i.name} × ${i.quantity}`).join(', ')||'—'}</p><p class="or-date">${new Date(o.date).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</p></div><div style="text-align:right"><p class="or-total">${o.total?fmt(o.total):''}</p><span class="or-status">Confirmed</span></div></div>`).join(''):`<div style="text-align:center;padding:48px 0;color:var(--muted)"><p style="font-size:36px;margin-bottom:12px">📦</p><p>No orders yet.</p><a href="/shop" class="btn-primary" style="display:inline-block;margin-top:14px">Start shopping</a></div>`);
+  } else if(sec==='settings'){
+    el.innerHTML=`<h2 style="font-family:var(--disp);font-style:italic;font-size:20px;font-weight:700;margin-bottom:20px">Account settings</h2>
+      <div style="background:var(--wh);border:1px solid var(--border);border-radius:var(--r2);padding:24px;max-width:480px">
+        <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:16px">Profile</p>
+        <div class="aff"><label>Full name</label><input value="${S.user.name}" disabled style="opacity:.7"/></div>
+        <div class="aff"><label>Email address</label><input value="${S.user.email}" disabled style="opacity:.7"/></div>
+        <p style="font-size:12px;color:var(--muted);margin-top:6px">Profile editing is available in the full version.</p>
+      </div>`;
+  }
+}
+
+function renderAuthPage() {
+  $('accSidebar').innerHTML='';
+  $('accContent').innerHTML=`
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabSI">Sign in</button>
+        <button class="auth-tab" id="tabRG">Create account</button>
+      </div>
+      <div id="authForm"></div>
+    </div>`;
+  showSigninForm();
+  $('tabSI').addEventListener('click',()=>{ $('tabSI').classList.add('active');$('tabRG').classList.remove('active');showSigninForm(); });
+  $('tabRG').addEventListener('click',()=>{ $('tabRG').classList.add('active');$('tabSI').classList.remove('active');showRegisterForm(); });
+}
+
+function showSigninForm() {
+  $('authForm').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="aff"><label>Email</label><input id="siE" type="email" placeholder="jane@example.com"/></div>
+      <div class="aff"><label>Password</label><input id="siP" type="password" placeholder="••••••"/></div>
+      <button class="btn-primary" id="siBtn" style="width:100%;padding:12px">Sign in</button>
+      <p id="siErr" style="color:var(--red);font-size:12.5px;min-height:18px"></p>
+      <hr style="border:none;border-top:1px solid var(--border)"/>
+      <button id="demoBtn" style="background:var(--sand2);border:1px solid var(--border);border-radius:var(--r);padding:10px;font-size:13px;font-weight:500;cursor:pointer">Sign in as demo user (jane@example.com)</button>
+    </div>`;
+  const doLogin=async(e,p)=>{ const d=await api('POST','/api/users/login',{email:e,password:p}); if(d.error){$('siErr').textContent=d.error;return;} S.token=d.token;S.user=d.user;localStorage.setItem('luma_token',d.token);toast(`Welcome back! 👋`,'ok');renderLoggedIn(); };
+  $('siBtn').addEventListener('click',()=>doLogin($('siE').value.trim(),$('siP').value));
+  $('demoBtn').addEventListener('click',()=>doLogin('jane@example.com','pass123'));
+}
+
+function showRegisterForm() {
+  $('authForm').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="aff"><label>Full name</label><input id="rgN" type="text" placeholder="Jane Smith"/></div>
+      <div class="aff"><label>Email</label><input id="rgE" type="email" placeholder="jane@example.com"/></div>
+      <div class="aff"><label>Password</label><input id="rgP" type="password" placeholder="Min 6 characters"/></div>
+      <button class="btn-primary" id="rgBtn" style="width:100%;padding:12px">Create account</button>
+      <p id="rgErr" style="color:var(--red);font-size:12.5px;min-height:18px"></p>
+    </div>`;
+  $('rgBtn').addEventListener('click',async()=>{ const name=$('rgN').value.trim(),email=$('rgE').value.trim(),pass=$('rgP').value; if(!name||!email||!pass){$('rgErr').textContent='Please fill in all fields.';return;} if(pass.length<6){$('rgErr').textContent='Password too short.';return;} const d=await api('POST','/api/users/register',{name,email,password:pass}); if(d.error){$('rgErr').textContent=d.error;return;} S.token=d.token;S.user=d.user;localStorage.setItem('luma_token',d.token);toast(`Welcome, ${d.user.name.split(' ')[0]} 🎉`,'ok');renderLoggedIn(); });
+}
+
+(async()=>{
+  document.getElementById('navMount').innerHTML=NAV_HTML;
+  document.getElementById('panelsMount').innerHTML=CART_PANEL_HTML+WISHLIST_PANEL_HTML+ACCOUNT_PANEL_HTML+CHECKOUT_HTML+CONFIRMED_HTML+COMPARE_HTML;
+  document.getElementById('footerMount').innerHTML=FOOTER_HTML;
+  initSharedListeners();
+  await Promise.all([loadUser(),refreshCart()]);
+  renderWishlist([]);
+  if(S.user) renderLoggedIn();
+  else renderAuthPage();
+})();
+</script>
+</body>
+</html>

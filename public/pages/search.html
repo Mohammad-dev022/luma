@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Search — Luma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css"/>
+</head>
+<body>
+<div id="navMount"></div>
+<div class="page-wrap" style="padding:36px 0 80px">
+  <div class="breadcrumb"><a href="/">Home</a><span>›</span><span style="color:var(--ink);font-weight:500">Search</span></div>
+  <div style="margin-bottom:28px">
+    <h1 style="font-family:var(--disp);font-style:italic;font-size:22px;font-weight:700;margin-bottom:4px" id="searchHeading">Results</h1>
+    <p style="font-size:13px;color:var(--muted)" id="resultsCount"></p>
+  </div>
+  <div class="pgrid" id="productGrid"></div>
+  <div class="empty" id="emptyState" style="display:none">
+    <p class="empty-glyph">—</p><h3>No results found</h3>
+    <p>Try a different search term.</p>
+    <a href="/shop" class="btn-primary" style="display:inline-block;margin-top:4px">Browse all products</a>
+  </div>
+</div>
+<div id="footerMount"></div>
+<div id="panelsMount"></div>
+<script src="/js/base.js"></script>
+<script>
+const q=new URLSearchParams(window.location.search).get('q')||'';
+window.onSearchInput=v=>{clearTimeout(window._st);window._st=setTimeout(()=>{if(v)window.location.href=`/search?q=${encodeURIComponent(v)}`},500);};
+(async()=>{
+  document.getElementById('navMount').innerHTML=NAV_HTML;
+  document.getElementById('panelsMount').innerHTML=CART_PANEL_HTML+WISHLIST_PANEL_HTML+ACCOUNT_PANEL_HTML+CHECKOUT_HTML+CONFIRMED_HTML+COMPARE_HTML;
+  document.getElementById('footerMount').innerHTML=FOOTER_HTML;
+  initSharedListeners();
+  if(q){const si=$('searchInput');if(si)si.value=q;}
+  await Promise.all([loadUser(),refreshCart()]);
+  renderWishlist([]);
+  if(!q){$('emptyState').style.display='block';$('productGrid').style.display='none';return;}
+  document.title=`"${q}" — Luma`; $('searchHeading').textContent=`Results for "${q}"`;
+  const d=await api('GET',`/api/products?search=${encodeURIComponent(q)}`);
+  const products=d.products||[];
+  $('resultsCount').textContent=`${products.length} item${products.length!==1?'s':''} found`;
+  if(!products.length){$('emptyState').style.display='block';$('productGrid').style.display='none';return;}
+  $('productGrid').style.display='grid'; $('emptyState').style.display='none';
+  $('productGrid').innerHTML=products.map((p,i)=>{
+    const disc=p.originalPrice?pct(p.originalPrice,p.price):0;
+    const bc=p.badge?`b-${p.badge.toLowerCase()}`:'',low=p.stock>0&&p.stock<=5;
+    return `<article class="pc" data-id="${p.id}" style="transition-delay:${i*40}ms">
+      <div class="pc-img" style="background:${p.bg}"><div class="pc-img-inner">${p.emoji}</div>
+        ${p.badge?`<span class="pc-badge ${bc}">${p.badge}</span>`:''}${low?`<span class="pc-low">Only ${p.stock} left</span>`:''}
+        <div class="pc-olay"><button class="pol-btn wlt ${S.wishlist.has(p.id)?'saved':''}" data-id="${p.id}">${S.wishlist.has(p.id)?'❤':'♡'}</button></div>
+      </div>
+      <div class="pc-body"><p class="pc-cat">${p.category}</p><h3 class="pc-name">${p.name}</h3>
+        <p class="pc-desc">${p.description}</p>
+        <div class="pc-stars"><span class="sv">${star(p.rating)}</span><span class="sn">${p.rating}</span><span class="sc">(${rnum(p.reviews)})</span></div>
+        <div class="pc-prices"><span class="pc-price">${fmt(p.price)}</span>${p.originalPrice?`<span class="pc-orig">${fmt(p.originalPrice)}</span><span class="pc-pct">-${disc}%</span>`:''}</div>
+        <div class="pc-add-wrap"><button class="pc-add" data-id="${p.id}" ${p.stock===0?'disabled':''}>Add to cart</button></div>
+      </div></article>`;
+  }).join('');
+  requestAnimationFrame(()=>$('productGrid').querySelectorAll('.pc').forEach((c,i)=>setTimeout(()=>c.classList.add('visible'),i*40)));
+  $('productGrid').querySelectorAll('.pc').forEach(c=>c.addEventListener('click',e=>{if(e.target.closest('.pc-add')||e.target.closest('.pol-btn'))return;window.location.href=`/product?id=${c.dataset.id}`;}));
+  $('productGrid').querySelectorAll('.pc-add').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();addToCart(parseInt(btn.dataset.id),1,btn);}));
+  $('productGrid').querySelectorAll('.wlt').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();toggleWishlist(parseInt(btn.dataset.id),products);btn.textContent=S.wishlist.has(parseInt(btn.dataset.id))?'❤':'♡';btn.classList.toggle('saved',S.wishlist.has(parseInt(btn.dataset.id)));}));
+})();
+</script>
+</body>
+</html>

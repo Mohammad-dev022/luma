@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Product — Luma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css"/>
+  <style>
+    .pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:36px 0 64px;align-items:start}
+    @media(max-width:760px){.pd-grid{grid-template-columns:1fr}}
+    .pd-img-main{border-radius:var(--r3);display:flex;align-items:center;justify-content:center;font-size:120px;min-height:380px;position:sticky;top:calc(var(--nav-h)+20px);transition:background .3s}
+    .pd-thumbnails{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .pd-thumb{width:70px;height:70px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid var(--border);cursor:pointer;transition:border-color .15s}
+    .pd-thumb.active,.pd-thumb:hover{border-color:var(--ink)}
+    .pd-info{display:flex;flex-direction:column;gap:0}
+    .pd-cat{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    .pd-name{font-size:clamp(24px,3vw,34px);font-weight:700;line-height:1.2;margin-bottom:12px}
+    .pd-stars-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+    .pd-stars{color:var(--gold);font-size:16px}.pd-rn{font-size:14px;font-weight:600}.pd-rc{font-size:13px;color:var(--muted);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+    .pd-price-row{display:flex;align-items:flex-end;gap:12px;margin-bottom:6px}
+    .pd-price{font-size:36px;font-weight:700}.pd-orig{font-size:18px;text-decoration:line-through;color:var(--muted)}.pd-save{background:#FEF2F2;color:var(--red);font-size:13px;font-weight:700;padding:4px 10px;border-radius:4px;margin-bottom:4px}
+    .pd-delivery{font-size:13.5px;color:var(--muted);margin-bottom:8px}
+    .pd-stock{font-size:13.5px;font-weight:600;margin-bottom:18px}
+    .s-in{color:var(--sage2)}.s-low{color:var(--gold)}.s-out{color:var(--red)}
+    .pd-divider{height:1px;background:var(--border);margin:18px 0}
+    .var-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink2);margin-bottom:8px}
+    .var-label span{font-weight:400;color:var(--muted);text-transform:none}
+    .var-opts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+    .vopt{border:1.5px solid var(--border);border-radius:var(--r);padding:7px 14px;font-size:13px;font-weight:500;background:var(--wh);cursor:pointer;transition:all .15s}
+    .vopt:hover{border-color:var(--ink)}.vopt.selected{border-color:var(--ink);background:var(--ink);color:var(--wh)}
+    .qty-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .qty-row label{font-size:13.5px;font-weight:500}
+    .qsel{display:flex;align-items:center;gap:9px;border:1.5px solid var(--border);border-radius:var(--r);padding:5px 14px}
+    .qsel button{background:none;border:none;font-size:22px;color:var(--ink);line-height:1;padding:0 3px;cursor:pointer}
+    .qsel span{font-size:15px;font-weight:600;min-width:24px;text-align:center}
+    .pd-actions{display:flex;gap:10px;margin-bottom:20px}
+    .pd-add-btn{flex:1;padding:14px;background:var(--ink);border:none;border-radius:var(--r);font-size:15px;font-weight:700;color:var(--wh);cursor:pointer;transition:all .15s}
+    .pd-add-btn:hover{background:var(--ink2)}.pd-add-btn.adding{background:var(--sage2)}
+    .pd-wish-btn{width:50px;border:1.5px solid var(--border);background:var(--wh);border-radius:var(--r);font-size:18px;cursor:pointer;transition:all .15s}
+    .pd-wish-btn:hover,.pd-wish-btn.saved{background:#FEF2F2;border-color:#FCA5A5}
+    .trust-pills{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+    .pd-desc-section{margin-top:28px}
+    .pd-desc-section h3{font-size:14.5px;font-weight:700;margin-bottom:10px}
+    .pd-desc{font-size:14.5px;color:var(--ink2);line-height:1.75}
+    /* Related */
+    .related-row{padding:48px 0;background:var(--sand)}
+    .related-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+    .rel-card{flex:0 0 200px;background:var(--wh);border-radius:var(--r2);overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all .18s}
+    .rel-card:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
+    .rel-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:46px}
+    .rel-body{padding:10px 12px}
+    .rel-name{font-size:13px;font-weight:600;margin-bottom:4px}
+    .rel-price{font-size:15px;font-weight:700}
+    /* Reviews */
+    .reviews-section{padding:48px 0}
+    .rev-summary{display:flex;align-items:center;gap:24px;background:var(--sand);border-radius:var(--r2);padding:20px 24px;margin-bottom:24px;flex-wrap:wrap}
+    .rev-big-num{font-size:52px;font-weight:700;line-height:1}
+    .rev-stars-big{color:var(--gold);font-size:20px;margin-bottom:4px}
+    .rev-bars{flex:1;min-width:160px}
+    .rev-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12.5px}
+    .rev-bar-label{min-width:32px;color:var(--muted)}
+    .rev-bar-bg{flex:1;height:6px;background:var(--border);border-radius:4px;overflow:hidden}
+    .rev-bar-fill{height:100%;background:var(--gold);border-radius:4px}
+    .review-list{display:flex;flex-direction:column;gap:20px}
+    .review-card{padding:20px;background:var(--wh);border:1px solid var(--border);border-radius:var(--r2)}
+    .rev-hd{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+    .rev-a{font-size:13.5px;font-weight:600}.rev-s{color:var(--gold);font-size:13px}.rev-v{font-size:11px;color:var(--sage2);font-weight:600}
+    .rev-title{font-size:14px;font-weight:600;margin-bottom:4px}
+    .rev-body{font-size:13.5px;color:var(--ink2);line-height:1.6;margin-bottom:8px}
+    .rev-meta{display:flex;align-items:center;gap:10px}
+    .rev-date{font-size:12px;color:var(--muted)}
+    .rev-helpful{background:none;border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s}
+    .rev-helpful:hover{border-color:var(--ink);color:var(--ink)}.rev-helpful.voted{border-color:var(--sage);color:var(--sage2)}
+    /* Write review */
+    .write-review-box{background:var(--sand);border-radius:var(--r2);padding:24px;margin-top:24px}
+    .star-picker{display:flex;gap:8px;margin-bottom:16px}
+    .sp-star{font-size:28px;cursor:pointer;opacity:.25;transition:opacity .15s,transform .15s}
+    .sp-star.active{opacity:1}
+    .sp-star:hover{transform:scale(1.15)}
+    .wr-input{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:9px 12px;font-size:14px;background:var(--wh);outline:none;margin-bottom:10px;transition:border-color .15s}
+    .wr-input:focus{border-color:var(--ink)}
+    .wr-ta{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:9px 12px;font-size:14px;background:var(--wh);outline:none;resize:vertical;min-height:90px;margin-bottom:12px;transition:border-color .15s}
+    .wr-ta:focus{border-color:var(--ink)}
+    .wr-err{color:var(--red);font-size:12.5px;margin-top:8px}
+  </style>
+</head>
+<body>
+<div id="navMount"></div>
+
+<div class="page-wrap">
+  <div style="padding-top:24px" id="pdMain">
+    <div class="breadcrumb" id="breadcrumb">
+      <a href="/">Home</a><span>›</span><a href="/shop">Shop</a><span>›</span><span id="pdCrumb" style="color:var(--ink);font-weight:500">Product</span>
+    </div>
+    <div class="pd-grid" id="pdGrid" style="display:none">
+      <!-- Image col -->
+      <div>
+        <div class="pd-img-main" id="pdImgMain"></div>
+        <div class="pd-thumbnails" id="pdThumbs"></div>
+      </div>
+      <!-- Info col -->
+      <div class="pd-info">
+        <p class="pd-cat" id="pdCat"></p>
+        <h1 class="pd-name" id="pdName"></h1>
+        <div class="pd-stars-row">
+          <span class="pd-stars" id="pdStars"></span>
+          <span class="pd-rn" id="pdRn"></span>
+          <span class="pd-rc" id="pdRc"></span>
+        </div>
+        <div class="pd-price-row">
+          <span class="pd-price" id="pdPrice"></span>
+          <span class="pd-orig" id="pdOrig" style="display:none"></span>
+        </div>
+        <span class="pd-save" id="pdSave" style="display:none"></span>
+        <div class="pd-divider"></div>
+        <p class="pd-delivery">🚚 Free delivery · Ships in 1–2 days</p>
+        <p class="pd-stock" id="pdStock"></p>
+        <!-- Variants -->
+        <div id="pdVariants"></div>
+        <!-- Qty -->
+        <div class="qty-row">
+          <label>Quantity</label>
+          <div class="qsel">
+            <button id="qd">−</button><span id="qn">1</span><button id="qi">+</button>
+          </div>
+        </div>
+        <div class="pd-actions">
+          <button class="pd-add-btn" id="pdAddBtn">Add to cart</button>
+          <button class="pd-wish-btn" id="pdWishBtn">♡</button>
+        </div>
+        <div class="trust-pills">
+          <span>🔒 Secure</span><span>↩️ 30-day returns</span><span>✅ Genuine products</span>
+        </div>
+        <div class="pd-divider"></div>
+        <div class="pd-desc-section">
+          <h3>About this product</h3>
+          <p class="pd-desc" id="pdDesc"></p>
+        </div>
+      </div>
+    </div>
+    <div id="pdError" style="display:none;text-align:center;padding:80px 0">
+      <p style="font-size:52px;margin-bottom:16px">—</p>
+      <h2 style="font-size:22px;font-weight:600;margin-bottom:8px">Product not found</h2>
+      <a href="/shop" class="btn-primary" style="display:inline-block;margin-top:8px">Browse shop</a>
+    </div>
+  </div>
+</div>
+
+<!-- RELATED -->
+<section class="related-row" id="relatedRow" style="display:none">
+  <div class="page-wrap">
+    <h2 class="section-h">You might also like</h2>
+    <div class="related-scroll" id="relatedGrid"></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews-section" id="reviewsSection">
+  <div class="page-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <h2 class="section-h" style="margin-bottom:0">Customer reviews</h2>
+      <button class="btn-ghost" id="writeReviewToggle">Write a review</button>
+    </div>
+    <div class="rev-summary" id="revSummary" style="display:none"></div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="write-review-box" id="writeReviewBox" style="display:none">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Write your review</h3>
+      <div class="star-picker" id="starPicker"></div>
+      <input type="text" class="wr-input" id="revTitle" placeholder="Review title (e.g. Great quality, fast delivery)"/>
+      <textarea class="wr-ta" id="revBody" placeholder="Share your experience — would you recommend this product?"></textarea>
+      <div style="display:flex;gap:10px">
+        <button class="btn-primary" id="submitReview">Submit review</button>
+        <button class="btn-ghost" id="cancelReview">Cancel</button>
+      </div>
+      <p class="wr-err" id="revErr"></p>
+    </div>
+  </div>
+</section>
+
+<div id="footerMount"></div>
+<div id="panelsMount"></div>
+
+<script src="/js/base.js"></script>
+<script>
+let prod=null, qty=1, selRating=0;
+const pid=parseInt(new URLSearchParams(window.location.search).get('id'));
+window.onSearchInput=v=>{ clearTimeout(window._st);window._st=setTimeout(()=>{if(v)window.location.href=`/search?q=${encodeURIComponent(v)}`},500); };
+
+async function loadProduct() {
+  if(!pid||isNaN(pid)){$('pdError').style.display='block';return;}
+  const d=await api('GET',`/api/products/${pid}`);
+  if(d.error){$('pdError').style.display='block';return;}
+  prod=d;
+  document.title=`${d.name} — Luma`;
+  $('pdCrumb').textContent=d.name;
+  $('pdGrid').style.display='grid';
+
+  // Image
+  $('pdImgMain').style.background=d.bg;
+  $('pdImgMain').innerHTML=`<span style="font-size:120px;transition:transform .3s">${d.emoji}</span>`;
+  $('pdImgMain').addEventListener('mouseenter',()=>$('pdImgMain').querySelector('span').style.transform='scale(1.08)');
+  $('pdImgMain').addEventListener('mouseleave',()=>$('pdImgMain').querySelector('span').style.transform='scale(1)');
+
+  // Related thumbnails
+  if(d.relatedProducts?.length) {
+    $('pdThumbs').innerHTML=d.relatedProducts.map(r=>`<div class="pd-thumb" style="background:${r.bg}" data-id="${r.id}" title="${r.name}">${r.emoji}</div>`).join('');
+    $('pdThumbs').querySelectorAll('.pd-thumb').forEach(t=>t.addEventListener('click',()=>window.location.href=`/product?id=${t.dataset.id}`));
+  }
+
+  // Info
+  $('pdCat').textContent=d.category;
+  $('pdName').textContent=d.name;
+  $('pdStars').textContent=star(d.rating);
+  $('pdRn').textContent=d.rating;
+  $('pdRc').textContent=`${rnum(d.reviews)} reviews`;
+  $('pdRc').addEventListener('click',()=>$('reviewsSection').scrollIntoView({behavior:'smooth'}));
+  $('pdPrice').textContent=fmt(d.price);
+  if(d.originalPrice){$('pdOrig').textContent=fmt(d.originalPrice);$('pdOrig').style.display='';$('pdSave').textContent=`Save ${pct(d.originalPrice,d.price)}%`;$('pdSave').style.display='';}
+  const sc=d.stock===0?'s-out':d.stock<=5?'s-low':'s-in';
+  const st=d.stock===0?'Out of stock':d.stock<=5?`Only ${d.stock} left — order soon`:'In stock';
+  $('pdStock').className=`pd-stock ${sc}`; $('pdStock').textContent=st;
+
+  // Variants
+  const vc=$('pdVariants');
+  if(d.variants&&Object.keys(d.variants).length){
+    vc.innerHTML=Object.entries(d.variants).map(([k,opts])=>`
+      <div style="margin-bottom:14px">
+        <p class="var-label">${k}: <span id="vs-${k}">${opts[0]}</span></p>
+        <div class="var-opts">${opts.map((o,i)=>`<button class="vopt${i===0?' selected':''}" data-k="${k}" data-v="${o}">${o}</button>`).join('')}</div>
+      </div>`).join('');
+    vc.querySelectorAll('.vopt').forEach(btn=>btn.addEventListener('click',()=>{
+      vc.querySelectorAll(`.vopt[data-k="${btn.dataset.k}"]`).forEach(b=>b.classList.toggle('selected',b.dataset.v===btn.dataset.v));
+      const lbl=$(`vs-${btn.dataset.k}`);if(lbl)lbl.textContent=btn.dataset.v;
+    }));
+  }
+
+  // Qty
+  $('qd').addEventListener('click',()=>{if(qty>1){qty--;updQty();}});
+  $('qi').addEventListener('click',()=>{if(qty<d.stock){qty++;updQty();}});
+  function updQty(){$('qn').textContent=qty;$('pdAddBtn').textContent=`Add to cart — ${fmt(d.price*qty)}`;}
+  $('pdAddBtn').textContent=`Add to cart — ${fmt(d.price)}`;
+  $('pdAddBtn').addEventListener('click',async()=>{ if(d.stock===0)return; await addToCart(d.id,qty,$('pdAddBtn')); });
+  if(d.stock===0){$('pdAddBtn').disabled=true;$('pdAddBtn').textContent='Out of stock';}
+
+  // Wish
+  const wb=$('pdWishBtn');
+  if(S.wishlist.has(d.id)){wb.textContent='❤';wb.classList.add('saved');}
+  wb.addEventListener('click',()=>{ toggleWishlist(d.id,[d]); wb.classList.toggle('saved',S.wishlist.has(d.id)); wb.textContent=S.wishlist.has(d.id)?'❤':'♡'; });
+
+  $('pdDesc').textContent=d.description;
+
+  // Related
+  if(d.relatedProducts?.length){
+    $('relatedRow').style.display='block';
+    $('relatedGrid').innerHTML=d.relatedProducts.map(r=>`
+      <div class="rel-card" data-id="${r.id}">
+        <div class="rel-img" style="background:${r.bg}">${r.emoji}</div>
+        <div class="rel-body"><p class="rel-name">${r.name}</p><p class="rel-price">${fmt(r.price)}</p></div>
+      </div>`).join('');
+    $('relatedGrid').querySelectorAll('.rel-card').forEach(c=>c.addEventListener('click',()=>window.location.href=`/product?id=${c.dataset.id}`));
+  }
+  loadReviews();
+}
+
+async function loadReviews(){
+  const d=await api('GET',`/api/reviews/${pid}`);
+  if(!d.reviews?.length){$('reviewList').innerHTML='<p style="color:var(--muted);font-size:13.5px">No reviews yet — be the first!</p>';return;}
+  // Summary
+  const ratingBuckets=[5,4,3,2,1].map(n=>({n,ct:d.reviews.filter(r=>r.rating===n).length}));
+  $('revSummary').style.display='flex';
+  $('revSummary').innerHTML=`
+    <div style="text-align:center"><p class="rev-big-num">${d.average}</p><p class="rev-stars-big">${star(d.average)}</p><p style="font-size:12px;color:var(--muted)">${d.count} review${d.count!==1?'s':''}</p></div>
+    <div class="rev-bars">${ratingBuckets.map(b=>`<div class="rev-bar-row"><span class="rev-bar-label">${b.n}★</span><div class="rev-bar-bg"><div class="rev-bar-fill" style="width:${d.count?Math.round(b.ct/d.count*100):0}%"></div></div><span style="min-width:24px;text-align:right">${b.ct}</span></div>`).join('')}</div>`;
+  $('reviewList').innerHTML=d.reviews.map(r=>`
+    <div class="review-card">
+      <div class="rev-hd"><span class="rev-a">${r.userName}</span><span class="rev-s">${'★'.repeat(r.rating)}</span>${r.verified?'<span class="rev-v">✓ Verified</span>':''}</div>
+      <p class="rev-title">${r.title}</p><p class="rev-body">${r.body}</p>
+      <div class="rev-meta"><span class="rev-date">${r.date}</span><button class="rev-helpful${S.votedReviews.has(r.id)?' voted':''}" data-rid="${r.id}">👍 Helpful (${r.helpful})</button></div>
+    </div>`).join('');
+  $('reviewList').querySelectorAll('.rev-helpful').forEach(btn=>{
+    btn.addEventListener('click',async()=>{ const rid=parseInt(btn.dataset.rid); if(S.votedReviews.has(rid))return; const d2=await api('POST',`/api/reviews/${rid}/helpful`); S.votedReviews.add(rid); btn.textContent=`👍 Helpful (${d2.helpful})`; btn.classList.add('voted'); });
+  });
+}
+
+// Write review
+$('writeReviewToggle').addEventListener('click',()=>{ const b=$('writeReviewBox'); b.style.display=b.style.display==='none'?'block':'none'; if(b.style.display==='block') b.scrollIntoView({behavior:'smooth'}); });
+$('cancelReview').addEventListener('click',()=>{$('writeReviewBox').style.display='none';selRating=0;$('revErr').textContent='';});
+// Star picker
+const sp=$('starPicker');
+sp.innerHTML=[1,2,3,4,5].map(n=>`<span class="sp-star" data-v="${n}">★</span>`).join('');
+sp.querySelectorAll('.sp-star').forEach(s=>{
+  s.addEventListener('mouseover',()=>sp.querySelectorAll('.sp-star').forEach((x,i)=>x.classList.toggle('active',i<parseInt(s.dataset.v))));
+  s.addEventListener('click',()=>{selRating=parseInt(s.dataset.v);sp.querySelectorAll('.sp-star').forEach((x,i)=>x.classList.toggle('active',i<selRating));});
+});
+sp.addEventListener('mouseleave',()=>sp.querySelectorAll('.sp-star').forEach((x,i)=>x.classList.toggle('active',i<selRating)));
+$('submitReview').addEventListener('click',async()=>{
+  const title=$('revTitle').value.trim(),body=$('revBody').value.trim(),err=$('revErr');
+  if(!selRating){err.textContent='Please pick a star rating.';return;}
+  if(!title){err.textContent='Please enter a title.';return;}
+  if(!body){err.textContent='Please write your review.';return;}
+  err.textContent='';
+  const d=await api('POST',`/api/reviews/${pid}`,{rating:selRating,title,body});
+  if(d.error){err.textContent=d.error;return;}
+  toast('Review submitted! ⭐','ok'); $('writeReviewBox').style.display='none'; selRating=0; $('revTitle').value=''; $('revBody').value=''; loadReviews();
+});
+
+(async()=>{
+  document.getElementById('navMount').innerHTML=NAV_HTML;
+  document.getElementById('panelsMount').innerHTML=CART_PANEL_HTML+WISHLIST_PANEL_HTML+ACCOUNT_PANEL_HTML+CHECKOUT_HTML+CONFIRMED_HTML+COMPARE_HTML;
+  document.getElementById('footerMount').innerHTML=FOOTER_HTML;
+  initSharedListeners();
+  await Promise.all([loadUser(),refreshCart(),loadProduct()]);
+  renderWishlist([]);
+})();
+</script>
+</body>
+</html>

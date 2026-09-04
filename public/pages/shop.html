@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Shop — Luma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css"/>
+  <style>
+    .shop-layout{display:grid;grid-template-columns:220px 1fr;gap:32px;padding:36px 0 80px;align-items:start}
+    @media(max-width:860px){.shop-layout{grid-template-columns:1fr}}
+    .sidebar{position:sticky;top:calc(var(--nav-h) + 16px)}
+    .sidebar-section{margin-bottom:28px}
+    .sidebar-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px}
+    .filter-opt{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13.5px;cursor:pointer;color:var(--ink2);transition:color .15s}
+    .filter-opt:hover{color:var(--ink)}
+    .filter-opt input[type=radio],.filter-opt input[type=checkbox]{accent-color:var(--ink);width:14px;height:14px;cursor:pointer}
+    .filter-opt.active-filter{font-weight:600;color:var(--ink)}
+    .price-slider-wrap{margin-top:8px}
+    .price-range{width:100%;accent-color:var(--ink)}
+    .price-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+    .toolbar-left{display:flex;align-items:baseline;gap:10px}
+    .toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .sort-sel{border:1px solid var(--border);border-radius:var(--r);padding:7px 11px;font-size:13px;color:var(--ink);background:var(--wh);cursor:pointer;outline:none}
+    .view-sw{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+    .vsw{background:var(--wh);border:none;padding:7px 9px;color:var(--muted);transition:all .15s;display:flex;align-items:center;cursor:pointer}
+    .vsw.active,.vsw:hover{background:var(--ink);color:var(--wh)}
+    .cmp-pill{background:var(--sand2);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:500;color:var(--ink2);transition:all .15s;cursor:pointer}
+    .cmp-pill:hover{background:var(--ink);color:var(--wh)}
+    .active-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+    .af-chip{display:flex;align-items:center;gap:5px;background:var(--ink);color:var(--wh);border-radius:20px;padding:4px 12px;font-size:12.5px;font-weight:500}
+    .af-chip button{background:none;border:none;color:rgba(255,255,255,.6);font-size:12px;cursor:pointer;padding:0}
+    @media(max-width:860px){.sidebar{position:static;display:flex;gap:12px;flex-wrap:wrap}.sidebar-section{margin-bottom:0;flex:1;min-width:140px}}
+  </style>
+</head>
+<body>
+<div id="navMount"></div>
+
+<div class="page-wrap">
+  <div style="padding-top:28px">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span><span style="color:var(--ink);font-weight:500">Shop</span>
+    </div>
+  </div>
+  <div class="shop-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <p class="sidebar-title">Category</p>
+        <label class="filter-opt"><input type="radio" name="cat" value="All" checked/> All products</label>
+        <label class="filter-opt"><input type="radio" name="cat" value="Electronics"/> Electronics</label>
+        <label class="filter-opt"><input type="radio" name="cat" value="Clothing"/> Clothing</label>
+        <label class="filter-opt"><input type="radio" name="cat" value="Footwear"/> Footwear</label>
+        <label class="filter-opt"><input type="radio" name="cat" value="Kitchen"/> Kitchen</label>
+        <label class="filter-opt"><input type="radio" name="cat" value="Furniture"/> Furniture</label>
+        <label class="filter-opt"><input type="radio" name="cat" value="Appliances"/> Appliances</label>
+        <label class="filter-opt"><input type="radio" name="cat" value="Outdoor"/> Outdoor</label>
+        <label class="filter-opt"><input type="radio" name="cat" value="Accessories"/> Accessories</label>
+      </div>
+      <div class="sidebar-section">
+        <p class="sidebar-title">Price</p>
+        <div class="price-slider-wrap">
+          <input type="range" class="price-range" id="priceMax" min="0" max="2500" value="2500" step="50"/>
+          <div class="price-labels"><span>£0</span><span>Up to £<span id="priceVal">2500</span></span></div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <p class="sidebar-title">Filter</p>
+        <label class="filter-opt"><input type="checkbox" id="onSale"/> On sale only</label>
+        <label class="filter-opt"><input type="checkbox" id="topRated"/> Top rated (4.7+)</label>
+        <label class="filter-opt"><input type="checkbox" id="inStock"/> In stock only</label>
+      </div>
+      <button id="clearFilters" class="btn-ghost" style="width:100%;font-size:13px;padding:9px">Clear all filters</button>
+    </aside>
+
+    <!-- MAIN -->
+    <div>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <h1 style="font-family:var(--disp);font-style:italic;font-size:22px;font-weight:700" id="shopTitle">All Products</h1>
+          <span style="font-size:13px;color:var(--muted)" id="resultsCount"></span>
+        </div>
+        <div class="toolbar-right">
+          <button class="cmp-pill" id="compareBtn" style="display:none">Compare <span id="compareCount">0</span></button>
+          <select id="sortSelect" class="sort-sel">
+            <option value="">Featured</option>
+            <option value="price-asc">Price ↑</option>
+            <option value="price-desc">Price ↓</option>
+            <option value="rating">Best rated</option>
+            <option value="reviews">Most reviewed</option>
+          </select>
+          <div class="view-sw">
+            <button class="vsw active" id="gridView"><svg width="12" height="12" viewBox="0 0 12 12"><rect width="5" height="5" rx="1" fill="currentColor"/><rect x="7" width="5" height="5" rx="1" fill="currentColor"/><rect y="7" width="5" height="5" rx="1" fill="currentColor"/><rect x="7" y="7" width="5" height="5" rx="1" fill="currentColor"/></svg></button>
+            <button class="vsw" id="listView"><svg width="12" height="12" viewBox="0 0 12 12"><rect y="1" width="12" height="2" rx="1" fill="currentColor"/><rect y="5" width="12" height="2" rx="1" fill="currentColor"/><rect y="9" width="12" height="2" rx="1" fill="currentColor"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="active-filters" id="activeFilters"></div>
+      <div class="pgrid" id="productGrid"></div>
+      <div class="empty" id="emptyState" style="display:none">
+        <p class="empty-glyph">—</p><h3>Nothing found</h3><p>Try adjusting your filters.</p>
+        <button id="emptyReset">Clear filters</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="footerMount"></div>
+<div id="panelsMount"></div>
+
+<script src="/js/base.js"></script>
+<script>
+let products=[], view='grid', maxPrice=2500;
+const params = new URLSearchParams(window.location.search);
+
+window.onSearchInput = v => { clearTimeout(window._st); window._st=setTimeout(()=>{ if(v) window.location.href=`/search?q=${encodeURIComponent(v)}`; },500); };
+
+async function loadProducts() {
+  const cat = document.querySelector('input[name=cat]:checked')?.value||'All';
+  const sort= $('sortSelect')?.value||'';
+  const p=new URLSearchParams();
+  if(cat!=='All') p.set('category',cat);
+  if(sort) p.set('sort',sort);
+  const d=await api('GET',`/api/products?${p}`);
+  products=d.products||[];
+  renderProducts();
+}
+window.loadProducts=loadProducts;
+
+function renderProducts() {
+  const grid=$('productGrid'),empty=$('emptyState');
+  const onSale=$('onSale')?.checked, topRated=$('topRated')?.checked, inStock=$('inStock')?.checked;
+  let list=[...products];
+  if(onSale) list=list.filter(p=>p.originalPrice&&p.originalPrice>p.price);
+  if(topRated) list=list.filter(p=>p.rating>=4.7);
+  if(inStock) list=list.filter(p=>p.stock>0);
+  if(maxPrice<2500) list=list.filter(p=>p.price<=maxPrice);
+  $('resultsCount').textContent=list.length?`${list.length} item${list.length!==1?'s':''}` :'';
+  if(!list.length){grid.style.display='none';empty.style.display='block';return;}
+  grid.style.display='grid';empty.style.display='none';
+  grid.className=`pgrid${view==='list'?' list':''}`;
+  grid.innerHTML=list.map((p,i)=>{
+    const disc=p.originalPrice?pct(p.originalPrice,p.price):0;
+    const wl=S.wishlist.has(p.id)?'saved':'', cmp=S.compareList.find(c=>c.id===p.id)?'comparing':'';
+    const low=p.stock>0&&p.stock<=5, bc=p.badge?`b-${p.badge.toLowerCase()}`:'';
+    return `<article class="pc" data-id="${p.id}" style="transition-delay:${Math.min(i,8)*40}ms">
+      <div class="pc-img" style="background:${p.bg}"><div class="pc-img-inner">${p.emoji}</div>
+        ${p.badge?`<span class="pc-badge ${bc}">${p.badge}</span>`:''}${low?`<span class="pc-low">Only ${p.stock} left</span>`:''}
+        <div class="pc-olay">
+          <button class="pol-btn wlt ${wl}" data-id="${p.id}">${wl?'❤':'♡'}</button>
+          <button class="pol-btn cmpt ${cmp}" data-id="${p.id}">⚖</button>
+        </div>
+      </div>
+      <div class="pc-body"><p class="pc-cat">${p.category}</p><h3 class="pc-name">${p.name}</h3>
+        <p class="pc-desc">${p.description}</p>
+        <div class="pc-stars"><span class="sv">${star(p.rating)}</span><span class="sn">${p.rating}</span><span class="sc">(${rnum(p.reviews)})</span></div>
+        <div class="pc-prices"><span class="pc-price">${fmt(p.price)}</span>${p.originalPrice?`<span class="pc-orig">${fmt(p.originalPrice)}</span><span class="pc-pct">-${disc}%</span>`:''}</div>
+        <div class="pc-add-wrap"><button class="pc-add" data-id="${p.id}" ${p.stock===0?'disabled':''}>Add to cart</button></div>
+      </div></article>`;
+  }).join('');
+  requestAnimationFrame(()=>grid.querySelectorAll('.pc').forEach((c,i)=>setTimeout(()=>c.classList.add('visible'),i*40)));
+  grid.querySelectorAll('.pc').forEach(c=>c.addEventListener('click',e=>{ if(e.target.closest('.pc-add')||e.target.closest('.pol-btn'))return; window.location.href=`/product?id=${c.dataset.id}`; }));
+  grid.querySelectorAll('.pc-add').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();addToCart(parseInt(btn.dataset.id),1,btn);}));
+  grid.querySelectorAll('.wlt').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();toggleWishlist(parseInt(btn.dataset.id),products);loadProducts();}));
+  grid.querySelectorAll('.cmpt').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();toggleCompare(parseInt(btn.dataset.id),products);renderProducts();}));
+  updateActiveFilters();
+}
+
+function updateActiveFilters() {
+  const chips=[];
+  const cat=document.querySelector('input[name=cat]:checked')?.value;
+  if(cat&&cat!=='All') chips.push({label:cat,clear:()=>{document.querySelector('input[name=cat][value="All"]').checked=true;loadProducts();}});
+  if($('onSale')?.checked) chips.push({label:'On sale',clear:()=>{$('onSale').checked=false;renderProducts();}});
+  if($('topRated')?.checked) chips.push({label:'Top rated',clear:()=>{$('topRated').checked=false;renderProducts();}});
+  if($('inStock')?.checked) chips.push({label:'In stock',clear:()=>{$('inStock').checked=false;renderProducts();}});
+  if(maxPrice<2500) chips.push({label:`Under £${maxPrice}`,clear:()=>{$('priceMax').value=2500;maxPrice=2500;$('priceVal').textContent=2500;renderProducts();}});
+  const af=$('activeFilters');
+  af.innerHTML=chips.map((c,i)=>`<span class="af-chip">${c.label}<button data-i="${i}">✕</button></span>`).join('');
+  af.querySelectorAll('button').forEach(btn=>{ chips[parseInt(btn.dataset.i)].clear(); });
+}
+
+(async()=>{
+  document.getElementById('navMount').innerHTML=NAV_HTML;
+  document.getElementById('panelsMount').innerHTML=CART_PANEL_HTML+WISHLIST_PANEL_HTML+ACCOUNT_PANEL_HTML+CHECKOUT_HTML+CONFIRMED_HTML+COMPARE_HTML;
+  document.getElementById('footerMount').innerHTML=FOOTER_HTML;
+  initSharedListeners();
+  await Promise.all([loadUser(),refreshCart()]);
+  renderWishlist([]);
+
+  // Apply URL params
+  const cat=params.get('cat'), tag=params.get('tag');
+  if(cat){ const r=document.querySelector(`input[name=cat][value="${cat}"]`); if(r)r.checked=true; }
+  if(tag==='bestseller') $('inStock').checked=true;
+  if(params.get('sale')==='true') $('onSale').checked=true;
+
+  await loadProducts();
+
+  // Sidebar events
+  document.querySelectorAll('input[name=cat]').forEach(r=>r.addEventListener('change',()=>{ const v=r.value; $('shopTitle').textContent=v==='All'?'All Products':v; loadProducts(); }));
+  $('priceMax').addEventListener('input',e=>{ maxPrice=parseInt(e.target.value);$('priceVal').textContent=maxPrice;renderProducts(); });
+  $('onSale').addEventListener('change',renderProducts);
+  $('topRated').addEventListener('change',renderProducts);
+  $('inStock').addEventListener('change',renderProducts);
+  $('sortSelect').addEventListener('change',loadProducts);
+  $('gridView').addEventListener('click',()=>{view='grid';$('gridView').classList.add('active');$('listView').classList.remove('active');renderProducts();});
+  $('listView').addEventListener('click',()=>{view='list';$('listView').classList.add('active');$('gridView').classList.remove('active');renderProducts();});
+  $('clearFilters').addEventListener('click',()=>{document.querySelector('input[name=cat][value="All"]').checked=true;$('onSale').checked=false;$('topRated').checked=false;$('inStock').checked=false;$('priceMax').value=2500;maxPrice=2500;$('priceVal').textContent=2500;$('sortSelect').value='';loadProducts();});
+  $('emptyReset').addEventListener('click',()=>$('clearFilters').click());
+  $('compareBtn').addEventListener('click',openCompareModal);
+  $('compareClearBtn').addEventListener('click',()=>{S.compareList=[];renderCompareBar();renderProducts();});
+})();
+</script>
+</body>
+</html>

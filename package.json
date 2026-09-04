@@ -1,0 +1,16 @@
+{
+  "name": "luma-store",
+  "version": "1.0.0",
+  "description": "Luma — Modern E-Commerce Demo (MSc Dissertation CI/CD Project)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "jest --coverage --verbose"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageThreshold": { "global": { "lines": 80 } }
+  },
+  "dependencies": { "express": "^4.18.2" },
+  "devDependencies": { "jest": "^29.7.0", "supertest": "^6.3.4" }
+}

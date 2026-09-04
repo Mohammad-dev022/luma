@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Orders — Luma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css"/>
+</head>
+<body>
+<div id="navMount"></div>
+<div class="page-wrap" style="padding:36px 0 80px">
+  <div class="breadcrumb"><a href="/">Home</a><span>›</span><a href="/account">Account</a><span>›</span><span style="color:var(--ink);font-weight:500">Orders</span></div>
+  <h1 style="font-family:var(--disp);font-style:italic;font-size:24px;font-weight:700;margin-bottom:24px">Your orders</h1>
+  <div id="ordersContent"></div>
+</div>
+<div id="footerMount"></div>
+<div id="panelsMount"></div>
+<script src="/js/base.js"></script>
+<script>
+window.onSearchInput=v=>{clearTimeout(window._st);window._st=setTimeout(()=>{if(v)window.location.href=`/search?q=${encodeURIComponent(v)}`},500);};
+(async()=>{
+  document.getElementById('navMount').innerHTML=NAV_HTML;
+  document.getElementById('panelsMount').innerHTML=CART_PANEL_HTML+WISHLIST_PANEL_HTML+ACCOUNT_PANEL_HTML+CHECKOUT_HTML+CONFIRMED_HTML+COMPARE_HTML;
+  document.getElementById('footerMount').innerHTML=FOOTER_HTML;
+  initSharedListeners();
+  await Promise.all([loadUser(),refreshCart()]);
+  renderWishlist([]);
+  const oc=$('ordersContent');
+  if(!S.user){oc.innerHTML=`<div style="text-align:center;padding:60px 0"><p style="font-size:22px;font-weight:600;margin-bottom:12px">Sign in to view your orders</p><a href="/account" class="btn-primary" style="display:inline-block">Go to account</a></div>`;return;}
+  const d=await api('GET','/api/users/orders');
+  const ords=d.orders||[];
+  if(!ords.length){oc.innerHTML=`<div style="text-align:center;padding:60px 0"><p style="font-size:52px;margin-bottom:16px">📦</p><p style="font-size:18px;font-weight:600;margin-bottom:8px">No orders yet</p><p style="color:var(--muted);margin-bottom:20px">Everything you order will appear here.</p><a href="/shop" class="btn-primary" style="display:inline-block">Start shopping</a></div>`;return;}
+  oc.innerHTML=ords.map(o=>`
+    <div style="background:var(--wh);border:1px solid var(--border);border-radius:var(--r2);padding:20px 24px;margin-bottom:14px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div><p style="font-size:14px;font-weight:700;margin-bottom:4px">Order #${o.orderId}</p><p style="font-size:13px;color:var(--muted);margin-bottom:4px">${o.items?.map(i=>`${i.name} × ${i.quantity}`).join(', ')||'—'}</p><p style="font-size:12px;color:var(--muted)">${new Date(o.date).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</p></div>
+      <div style="text-align:right;flex-shrink:0"><p style="font-size:20px;font-weight:700;margin-bottom:6px">${o.total?fmt(o.total):''}</p><span style="font-size:12px;font-weight:600;background:#DCFCE7;color:var(--sage2);padding:3px 10px;border-radius:20px">Confirmed</span></div>
+    </div>`).join('');
+})();
+</script>
+</body>
+</html>
