@@ -14,7 +14,7 @@ router.get('/', (req, res) => res.json(summary()));
 router.post('/', (req, res) => {
   const { productId, quantity } = req.body;
   if (!productId || !quantity) return res.status(400).json({ error: 'productId and quantity are required' });
-  if (typeof quantity !== 'number' || quantity < 1) return res.status(400).json({ error: 'quantity must be a positive number' });
+  if (typeof quantity !== 'number' || !Number.isInteger(quantity) || quantity < 1) return res.status(400).json({ error: 'quantity must be a positive whole number' });
   const product = products.find(p => p.id === productId);
   if (!product) return res.status(404).json({ error: `Product with ID ${productId} not found` });
   if (quantity > product.stock) return res.status(400).json({ error: `Only ${product.stock} units of "${product.name}" available in stock` });
