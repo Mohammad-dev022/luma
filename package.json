@@ -1,7 +1,7 @@
 {
   "name": "luma-store",
   "version": "1.0.0",
-  "description": "Luma — Modern E-Commerce Demo (MSc Dissertation CI/CD Project)",
+  "description": "Luma — Modern E-Commerce Demo",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
