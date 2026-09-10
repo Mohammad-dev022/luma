@@ -383,6 +383,7 @@ window.CART_PANEL_HTML = `
       <div class="tl tbig"><span>Total</span><span id="cartTotal">£0.00</span></div>
     </div>
     <button class="to-checkout" id="checkoutBtn">Checkout →</button>
+    <button id="clearCartBtn">Clear Cart</button>
     <p class="panel-note">Free returns · Secure payment · 30 days</p>
   </div>
 </aside>`;
@@ -497,6 +498,7 @@ window.initSharedListeners = () => {
   $('accClose')?.addEventListener('click',   closeAccount);
   $('accScrim')?.addEventListener('click',   closeAccount);
   $('checkoutBtn')?.addEventListener('click', openCheckout);
+  $('clearCartBtn')?.addEventListener('click', () => { S.cart = []; renderCart(); });
   $('coClose')?.addEventListener('click', ()=>{ $('coBg')?.classList.remove('on'); $('coModal')?.classList.remove('open'); });
   $('coBg')?.addEventListener('click',    ()=>{ $('coBg')?.classList.remove('on'); $('coModal')?.classList.remove('open'); });
   $('placeOrderBtn')?.addEventListener('click', placeOrder);

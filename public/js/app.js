@@ -820,6 +820,10 @@ const openWishlist  = () => { $('wlPanel').classList.add('open');  $('wlScrim').
 const closeWishlist = () => { $('wlPanel').classList.remove('open'); $('wlScrim').classList.remove('on'); document.body.style.overflow=''; };
 
 /* ── Event wiring ─────────────────────────────────────────────────────── */
+document.getElementById('clearCartBtn').addEventListener('click', () => {
+  cart = [];
+  renderCart();
+});
 $('cartToggle').addEventListener('click', openCart);
 $('cartClose').addEventListener('click',  closeCart);
 $('cartScrim').addEventListener('click',  closeCart);
