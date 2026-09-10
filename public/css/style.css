@@ -247,9 +247,28 @@ body.loading .page-loader{opacity:1;visibility:visible}
 .totals{margin-bottom:13px}
 .tl{display:flex;justify-content:space-between;font-size:14px;color:var(--ink2);padding:3px 0}
 .tbig{font-size:18px;font-weight:700;color:var(--ink);border-top:1px solid var(--border);padding-top:9px;margin-top:5px}
+
 .to-checkout{width:100%;padding:13px;background:var(--sage);border:none;border-radius:var(--r);font-size:14px;font-weight:700;color:var(--ink);transition:all .15s;margin-bottom:8px}
 .to-checkout:hover{background:var(--sage2);color:var(--wh)}
 .panel-note{font-size:11px;color:var(--muted);text-align:center}
+.clear-cart-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  background: transparent;
+  color: #9ca3af;
+  border: 1px solid #374151;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.clear-cart-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
 
 /* Account panel */
 .acc-form{display:flex;flex-direction:column;gap:12px}

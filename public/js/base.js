@@ -383,7 +383,7 @@ window.CART_PANEL_HTML = `
       <div class="tl tbig"><span>Total</span><span id="cartTotal">£0.00</span></div>
     </div>
     <button class="to-checkout" id="checkoutBtn">Checkout →</button>
-    <button id="clearCartBtn">Clear Cart</button>
+    <button id="clearCartBtn" class="clear-cart-btn">Clear Cart</button>
     <p class="panel-note">Free returns · Secure payment · 30 days</p>
   </div>
 </aside>`;
