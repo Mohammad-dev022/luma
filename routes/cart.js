@@ -5,7 +5,7 @@ const { products } = require('./products');
 let cart = [];
 
 function summary() {
-  const total = cart.reduce((s, i) => s + i.price * , 0);
+  const total = cart.reduce((s, i) => s + i.price * i.quantity , 0);
   return { itemCount: cart.reduce((s,i) => s+i.quantity, 0), total: parseFloat(total.toFixed(2)), items: cart };
 }
 
