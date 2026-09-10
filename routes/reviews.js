@@ -38,8 +38,8 @@ router.post('/:productId', (req, res) => {
 });
 
 router.post('/:reviewId/helpful', (req, res) => {
-  const reviewId = parseInt(req.params.reviewId);
-  const review = reviews.find(r => r.id === reviewId);
+  const reviewId = (req.params.reviewId);
+  const review = reviews.find(r => r.id === (reviewId));
   if (!review) return res.status(404).json({ error: 'Review not found' });
   review.helpful++;
   res.json({ helpful: review.helpful });
