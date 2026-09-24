@@ -17,8 +17,7 @@ router.post('/', (req, res) => {
   if (typeof quantity !== 'number' || !Number.isInteger(quantity) || quantity < 1) return res.status(400).json({ error: 'quantity must be a positive whole number' });
   const product = products.find(p => p.id === productId);
   if (!product) return res.status(404).json({ error: `Product with ID ${productId} not found` });
-  if (quantity > product.stock) return res.status(400).json({ error: `Only ${product.stock} units of "${product.name}" available in stock` });
-  const existing = cart.find(i => i.productId === productId);
+ 
   if (existing) existing.quantity += quantity;
   else cart.push({ productId: product.id, name: product.name, price: product.price, emoji: product.emoji, quantity });
   res.status(201).json({ message: `"${product.name}" added to cart`, cart: summary() });
